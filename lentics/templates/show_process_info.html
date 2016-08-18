@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Comando:</h3>
+<pre>{{p.comando}}</pre>
+<hr>
+	<h2>Resultados</h2>
+	<ul class="nav nav-tabs">
+		<li class="active"><a data-toggle="tab" href="#resultado">Texto</a></li>
+		<li><a data-toggle="tab" href="#errores">Standar Error</a></li>
+		<li><a data-toggle="tab" href="#salida">Standar Output</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div id="resultado" class="tab-pane fade in active">
+			<div class="row">
+			    <div class="col-sm-10"><h3>Archivo de salida</h3></div>
+			    <div class="col-sm-2">
+			    	<br>
+			    	<a href="/files/{{p.resultado.id}}/">
+			    		<span class="label label-success">Descargar archivo</span>
+			    	</a>
+			    </div>
+			</div>
+			<div class="row">
+			    <div class="col-sm-10">
+			    	<img src="/static/{{p.resultado.fileUpload.name}}.png/" style="max-width: 100%;">
+			    </div>
+			</div>
+		</div>
+		<div id="errores" class="tab-pane fade">
+			<h3>Errores y advertencias</h3>
+    		<pre>{% if "" == p.std_err %}El comando no devolvió errores o advertencias
+    		{% else %}
+    			{{p.std_err}}
+    		{% endif %}</pre>
+		</div>
+		<div id="salida" class="tab-pane fade">
+			<h3>Salida del comando</h3>
+    		<pre>{% if "" == p.std_out %}El comando no devolvió mensajes
+    		{% else %}
+    			{{p.std_out}}
+    		{% endif %}</pre>
+		</div>
+	</div>
+{% endblock %}

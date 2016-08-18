@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    Subir archivo
+</h1>
+<form action="/files/submit/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_description"><h4>Descripción:</h4></label>
+        <input class="form-control" id="id_description" name="description" type="text">
+    </div>
+    <div class="form-group">
+        <label for="id_fileUploaded"><h4>Archivo:</h4></label>
+        <input class="form-control" id="id_fileUploaded" name="file" type="file">
+    </div>
+    <button type="submit" class="btn btn-default">Subir</button>
+</form>
+{% endblock %}

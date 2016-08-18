@@ -1,0 +1,235 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Latest compiled and minified CSS 
+    <link rel="stylesheet" type="text/css" href="http://bioinfud.com/DifExp/bootstrap2.min.css"/>-->
+    <!-- Optional theme -->  
+    <title>{% block title %}Fusion Multipan (FMP){% endblock %}</title>
+        <!-- Latest compiled and minified JavaScript and JQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/jquery.Jcrop.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.Jcrop.min.css' %}" type="text/css" />
+</head>
+<body>
+<div class="container" style="width: 100%!important;">
+    <div class="row">
+        <div class="col-sm-12">
+        <nav class="navbar navbar-default" role="navigation">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <a class="navbar-brand" href="/">Fusion MultiPan</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                {% if not user.is_authenticated %}
+                    <li>
+                    <a href="/register/">Registrarse</a>
+                    </li>
+                    <li><a href="/login/">Acceder</a></li>
+                {% else %}
+                <span></span>
+                    <li  class="active" ><a href="#" style="cursor:default">Bienvenido, {{user.profile.firstName}}</a>  </li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/logout/">Salir</a></li>
+                {% endif %}
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+        </div>
+    </div>
+    <div class="row">
+        {% if user.is_authenticated %}
+        <div class="col-sm-2">
+            <ul class="nav nav-pills nav-stacked">
+                <li ><a href="/">Home</a></li>
+                <li ><a href="/files/">Imagenes</a></li>
+                <li ><a href="/process/show/">Procesos</a></li>
+            </ul>
+            <!--<div class="alert alert-success" style="bottom: 30px;position: fixed;">
+                <strong>Ayuda: </strong><br><br>
+                &#8226; <a href="/help/video/">Video </a><br>
+                &#8226; <a href="/help/tutorial/" target="_blank">Tutorial </a>
+            </div>-->
+            <!-- <div id="preview-pane" style="position: fixed;z-index: 2000;bottom: 5px;left: 5px;">
+                <div class="preview-container">
+                    <img src="{% static 'default.png' %}" class="jcrop-preview" id="preview_mul" alt="Preview" />
+                </div>
+            </div> -->
+        </div>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <div class="col-sm-10" style="border-left: solid rgb(80, 121, 150) 1px;">
+        {% endif %}
+            {% block content %}{% endblock %}
+        {% if user.is_authenticated %}
+        </div>
+        {% endif %}
+    </div>        
+</div>
+<script type="text/javascript">
+// se declara la API de jcrop para interactuar con la imagen 
+var jcrop_api
+
+/* Grab some information about the preview pane
+$preview = $('#preview-pane'),
+$pcnt = $('#preview-pane .preview-container'),
+$pimg = $('#preview-pane .preview-container img'),
+
+xsize = $pcnt.width(),
+ysize = $pcnt.height();*/
+
+$('#id_file_mul').on('change', function (e) {
+    /*$("#id_tam_pixel_mul").val(json[this.value].cell_size);
+    $("#id_lat_mul").val(json[this.value].x);
+    $("#id_lon_mul").val(json[this.value].y);*/
+    // si ya existe un API declarado, lo destruyo para poder redimencionar la imagen
+    if(jcrop_api) jcrop_api.destroy();
+    $('#target_mul').attr('src',/static/+this.value+'.jpg');
+    $('#target_mul').attr('style','max-width: 100%');  
+});
+$(document).on('input', '#id_diadica_mul', function() {
+    //se actualiza el valor en frontend
+    var diadic_val = $('#id_diadica_mul').val();
+    $('#id_diadica_mul_val').html( diadic_val );
+    //se cambia el tamaño del recorte
+    var max_val_diadic = Math.pow(2, diadic_val);
+    if(jcrop_api) jcrop_api.setSelect([0, 0, max_val_diadic, max_val_diadic]);
+});
+
+$('#id_btn_cortar').on('click', function (e) {
+// verifico que los campos esten llenos
+if(!verificarCampos()){
+    alert('debe llenar todos los campos');
+}else{
+        
+    var image = new Image();
+    image.src = $('#target_pan').attr("src");
+    if (image.naturalHeight == 0) image.src = $('#target_mul').attr("src");
+    //creo un nuevo widget de Jcrop para la nueva imagen
+    $('#target_pan').Jcrop({
+        //onChange: showPreview_pan,
+        trueSize: [image.naturalWidth,image.naturalHeight],
+        bgColor:     'black',
+        bgOpacity:   .2,
+        setSelect:   [ 0, 0, 0, 0 ],
+        aspectRatio: 1,
+        allowResize: false,
+        allowSelect: false
+    },function(){
+        jcrop_api_pan = this;
+    });
+    //Establesco los valores del slider que determina el tamaño del recorte
+    var image = new Image();
+    image.src = $('#target_mul').attr("src");
+    if (image.naturalHeight == 0) image.src = $('#target_mul').attr("src");
+    //creo un nuevo widget de Jcrop para la nueva imagen
+    $('#target_mul').Jcrop({
+        onChange: move_jcrops,
+        trueSize: [image.naturalWidth,image.naturalHeight],
+        bgColor:     'black',
+        bgOpacity:   .2,
+        setSelect:   [ 0, 0, 200, 200 ],
+        aspectRatio: 1,
+        allowResize: true,
+        allowSelect: true
+    },function(){
+        // Use the API to get the real image size
+        //var bounds = this.getBounds();
+        //boundx = bounds[0];
+        //boundy = bounds[1];
+        // Store the API in the jcrop_api variable
+        jcrop_api = this;
+        // Move the preview into the jcrop container for css positioning
+        //$preview.appendTo(jcrop_api_mul.ui.holder);
+        
+    });
+}
+});
+function verificarCampos(){
+    return true
+    if(
+        $('#id_tam_pixel_mul').val().trim() === '' ||
+        $('#id_lon_mul').val().trim() === '' ||
+        $('#id_lat_mul').val().trim() === ''
+         ){
+        return false
+    }else{return true}
+}
+function move_jcrops(c){
+    /*
+    if (parseInt(c.w) > 0)
+      {
+        proporcion = $('#id_tam_pixel_mul').val() / $('#id_tam_pixel_pan').val();
+        desfaseX = ($('#id_lon_mul').val() - $('#id_lon_pan').val())*proporcion;
+        desfaseY = ($('#id_lat_mul').val() - $('#id_lat_pan').val())*proporcion;
+
+        x1= c.x - desfaseX
+        console.log('x1:'+c.x+' -'+desfaseX)
+        y1= c.y - desfaseY
+        x2= c.x2 - desfaseX
+        y2= c.y2 - desfaseY
+        $('#id_x_mul').val(c.x)
+        $('#id_y_mul').val(c.y)
+        $('#id_x2_mul').val(c.x2)
+        $('#id_y2_mul').val(c.y2)
+        $('#id_x_pan').val(x1*proporcion)
+        $('#id_y_pan').val(y1*proporcion)
+        $('#id_x2_pan').val(x2*proporcion)
+        $('#id_y2_pan').val(y2*proporcion)
+        console.log('desfase en x: '+desfaseX);
+        console.log('desfase en y: '+desfaseY);
+        if(jcrop_api) jcrop_api.setSelect([x1*proporcion, y1*proporcion, x2*proporcion, y2*proporcion]);
+
+      }*/
+}
+// function showPreview_pan(coords){
+//     var rx = 100 / coords.w;
+//     var ry = 100 / coords.h;
+//     $('#preview_pan').css({
+//         width: Math.round(rx * $('target_mul').width()) + 'px',
+//         height: Math.round(ry * $('target_mul').height()) + 'px',
+//         marginLeft: '-' + Math.round(rx * coords.x) + 'px',
+//         marginTop: '-' + Math.round(ry * coords.y) + 'px'
+//     });
+// }
+</script>
+<style type="text/css">
+
+/* Apply these styles only when #preview-pane has
+   been placed within the Jcrop widget */
+.jcrop-holder #preview-pane {
+    display: block;
+    position: fixed;
+    z-index: 2000;
+    bottom: 5px;
+    left: 5px;
+    padding: 1px;
+    border: 1px rgba(0,0,0,.4) solid;
+    background-color: white;
+
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+
+    -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* The Javascript code will set the aspect ratio of the crop
+   area based on the size of the thumbnail preview,
+   specified here */
+#preview-pane .preview-container {
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+}
+
+</style>
+</body>
+</html>

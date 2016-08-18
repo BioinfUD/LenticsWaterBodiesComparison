@@ -1,0 +1,33 @@
+1	convertir las imagenes al tamaño de pixel correcto
+1.1		tomar el tamaño de pixel de ambas imagenes y encontrar Maximo Comun Divisor
+1.2		dividir cada pixel en cuantas veces sea necesario segun el MCD
+
+2	obtento el value de la imagen multiespectral
+2.1		convierto la imagen de RGB a VHS
+2.2		separo la capa de V
+
+3	Hacerle la transformada a V
+3.1 	Cada fila por toda la diagonal
+3.2		uno todas las filas resultantes
+3.3		le hago la transpuesta a la nueva matriz
+3.4		repito pasos 2.2 y 2.3
+
+4	Hacer la transformada a la Pancromatica
+4.1 	Cada fila por toda la diagonal
+4.2		uno todas las filas resultantes
+4.3		le hago la transpuesta a la nueva matriz
+4.4		repito pasos 2.2 y 2.3
+
+5	Unir los elementos especificos de la Pancromatica y de V
+5.1		dividir cada matriz en 4 (recursivamente segun nivel de transformada)
+5.2		unir de nuevo los elementos correctos de cada matriz
+
+6	Hacerle la transformada inversa
+6.1 ---
+6.2 ---
+6.3 ---
+
+7	Obtener la nueva imagen RGB
+7.1		reemplazar el anterior V (de VHS) con el nuevo V del paso 6
+7.2		Convertir de HSV a RGB
+7.3		Guardar la imagen y mostrar el resultado

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    Lista de procesos finalizados
+</h1>
+A continuacion se listan los procesos que ha corrido en el sistema
+<table class="table">
+<thead>
+    <tr>
+        <th>ID</th>
+        <th>Contador</th>
+        <th>Estado</th>
+        <th>Inicio</th>
+        <th>Final</th>
+        <th>Ver</th>
+    </tr>
+</thead>
+<tbody>
+    {% for p in process_list %}
+    <tr
+        {% if "Terminado exitosamente" == p.get_estado %}
+            style="background-color: #7cde7c;"
+        {% elif "Terminado con errores" == p.get_estado %}
+            style="background-color: #ff8d00;"
+        {% endif %}
+    >
+        <td>{{p.pk}}</td>
+        <td>{{p.contador}}</td>
+        <td>{{p.get_estado}}</td>
+        <td>{{p.inicio}}</td>
+        <td>{{p.fin}}</td>
+        <td>{% if "Ejecutandose" == p.get_estado or "En espera" == p.get_estado %}
+            {% elif "Terminado con errores" == p.get_estado %}
+            <a href="/process/error/{{p.id}}/">Ver</a>
+            {% else %}
+            <a href="/process/show/{{p.id}}/">Ver</a>
+            {% endif %}
+    </tr>
+    {% endfor %}
+</tbody>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- HOME si el usuario está logueado -->
+{% if user.is_authenticated %}
+{% load staticfiles %}
+    <h1 style="text-align: center;">
+       Fusión de Imagenes:
+    </h1>
+    <br>
+    <form action="/make-fusion/" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label for="id_file">Multiespectral:</label>
+                <select class="form-control" id="id_file_mul" name="file_mul"  required>
+                    <option value="">seleccione un archivo</option>
+                    {% for f in image_files %}
+                        <option value='{{f.fileUpload.name}}'>{{f.fileUpload.name}}</option>
+                    {% endfor %}
+                </select>* seleccione una imagen multiespectral subida previamente<br><br>
+                <div class="row">
+                    <!--<div class="col-sm-4">
+                        <label for="id_tam_pixel_mul" class="col-sm-12 control-label">Tamaño de celda:</label>
+                        <input type="text" class="form-control" id="id_tam_pixel_mul" name="tam_pixel_mul" placeholder="metros" value="1">‎
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="id_lat_mul" class="col-sm-12 control-label">Esquina UL Y</label>
+                        <input type="text" class="form-control" id="id_lat_mul" name="lat_mul" placeholder="coordenadas planas" value="0">‎
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="id_lon_mul" class="col-sm-12 control-label">Esquina UL X</label>
+                        <input type="text" class="form-control" id="id_lon_mul" name="lon_mul" placeholder="coordenadas planas" value="0">‎
+                    </div>-->
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-primary" id="id_btn_cortar">Iniciar corte</button>
+                    </div>
+                    <div class="col-sm-7">
+                        <input type="range" id="id_diadica_mul" name="diadica_mul" min="1" max="10" value="1" style="display:none;">
+                    </div>
+                    <div class="col-sm-1" id="id_diadica_mul_val" style="font-size: 16px;display:none;">1</div>
+                </div>
+                <img src="{% static 'default.png' %}" id="target_mul" style="width: 100%;" />
+            </div>
+        </div>
+    </div>
+    Coordenadas mul:
+    <input type="text" id="id_x_mul" name="x_mul" value="0">
+    <input type="text" id="id_y_mul" name="y_mul" value="0">
+    <input type="text" id="id_x2_mul" name="x2_mul" value="0">
+    <input type="text" id="id_y2_mul" name="y2_mul" value="0">
+    <br/>
+    Coordenadas pan:
+    <input type="text" id="id_x_pan" name="x_pan" value="0">
+    <input type="text" id="id_y_pan" name="y_pan" value="0">
+    <input type="text" id="id_x2_pan" name="x2_pan" value="0">
+    <input type="text" id="id_y2_pan" name="y2_pan" value="0">
+    <input type="submit" value="Enviar" />
+</form>
+    <br><br>
+<!-- HOME si el usuario NO está logueado -->
+{% else %}
+<!--
+<div class="row" style="text-align:center">
+    <div class="col-sm-12">
+        <h1>
+            Fusion Multi-Pan (FMP)
+        </h1>
+        <br>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/Ub1BPjfoKgU?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+<br>
+<div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8" style="text-align: justify;">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </div>
+    <div class="col-sm-2"></div>
+</div>
+-->
+{% endif %}
+
+<script type="text/javascript">
+    var json="{{json}}";
+    var json = json.replace(/&quot;/g, '\"');
+    json = JSON.parse(json);
+</script>
+{% endblock %}
