@@ -25,7 +25,7 @@ urlpatterns = patterns('processing.views',
     url(r'^process/$', 'show_processes'), #revisar
     url(r'^editfile/$', 'editfile'),
     # Tools execution
-    url(r'^make-fusion/$', 'make_fusion'),
+    url(r'^processing/$', 'processing'),
     #HELP
     url(r'^help/video/$', 'show_video'),
     url(r'^help/tutorial/$', 'show_tutorial'),

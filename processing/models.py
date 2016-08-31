@@ -143,49 +143,55 @@ class Proceso(models.Model):
 
 class Fusion(models.Model):
 
-    name = models.TextField(default="Image Fusion Multispectral and Pancromatic")
+    name = models.TextField(default="Lentic area calculation")
     procesos = models.ManyToManyField(Proceso)
     profile = models.ForeignKey(Profile)
     out_file = models.ForeignKey(File, null=True)
     nivel = models.IntegerField(default=1)
 
-    def run_this(self, file_pan="", file_mul="", nivel=""):
-        self.name = "Fusión #%s" % self.id
+    def run_this(self, file_list=""):
+        self.name = "Lentic #%s" % self.id
         self.save()
-        tmp_dir = "fusion_%s" % randint(1, 1000000)
+        # lista de archivos temporales
+        temp_list = []
         # Se ejecuta el Scrip creado para fusionar las imagenes
-        comando = "python /home/nazkter/Sofware_Develop/fusion_multipan/bin/fusionScript.py %s %s %s /tmp/%s" % (file_mul, file_pan, nivel, tmp_dir)
+        comando = ""
+        for img in file_list:
+            tmp_dir = "lentic_%s.tif" % randint(1, 1000000)
+            temp_list.append(tmp_dir)
+            comando = comando +"python /home/nazkter/Sofware_Develop/lentic/bin/lentico.py /home/nazkter/Sofware_Develop/lentic/files/%s /tmp/%s && " % (img, tmp_dir)
+        comando = comando[0:-3]
         print "comando: %s" % (comando)
         # Se crea el proseso y se envia a la cola
-        p1 = Proceso(comando=str(comando),profile=self.profile)
-        p1.save()
-        self.procesos.add(p1)
-        # To get files with path: tales.fileUpload.path
-        # Se genera indice y espero hasta que este listo
-        t1 = threading.Thread(target=p1.run_process)
-        t1.setDaemon(True)
-        t1.start()
-        while t1.isAlive():
-            sleep(1)
-        file_name = "/tmp/%s.tif" % tmp_dir
+        '''p1 = Proceso(comando=str(comando),profile=self.profile)
+                                p1.save()
+                                self.procesos.add(p1)
+                                # To get files with path: tales.fileUpload.path
+                                # Se genera indice y espero hasta que este listo
+                                t1 = threading.Thread(target=p1.run_process)
+                                t1.setDaemon(True)
+                                t1.start()
+                                while t1.isAlive():
+                                    sleep(1)
+                                file_name = "/tmp/%s.shp" % tmp_dir
+                        
+                                
+                                #with open(file_name, 'r+') as f:
+                                #    text = f.read()
+                                #    f.seek(0)
+                                #    f.truncate()
+                                #    f.write(text.replace(' ', '\t'))
+                                
+                                out_file = File(fileUpload=Django_File(open(
+                                    file_name)), description="Salida " + self.name, profile=self.profile, ext="results")
+                                out_file.save()
+                                self.out_file = out_file
+                                p1.resultado = out_file
+                                p1.save()'''
 
-        '''
-        with open(file_name, 'r+') as f:
-            text = f.read()
-            f.seek(0)
-            f.truncate()
-            f.write(text.replace(' ', '\t'))
-        '''
-        out_file = File(fileUpload=Django_File(open(
-            file_name)), description="Salida " + self.name, profile=self.profile, ext="results")
-        out_file.save()
-        self.out_file = out_file
-        p1.resultado = out_file
-        p1.save()
-
-    def run(self, file_pan="", file_mul="", nivel=""):
+    def run(self, file_list=""):
         t = threading.Thread(target=self.run_this, kwargs=dict(
-            file_pan=file_pan, file_mul=file_mul, nivel=nivel))
+            file_list=file_list))
         t.setDaemon(True)
         t.start()
 

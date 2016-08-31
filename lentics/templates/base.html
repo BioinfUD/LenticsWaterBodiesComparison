@@ -2,15 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Latest compiled and minified CSS 
-    <link rel="stylesheet" type="text/css" href="http://bioinfud.com/DifExp/bootstrap2.min.css"/>-->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" type="text/css" href="http://bioinfud.com/DifExp/bootstrap2.min.css"/>
     <!-- Optional theme -->  
-    <title>{% block title %}Fusion Multipan (FMP){% endblock %}</title>
+    <title>{% block title %}Lentic Water Bodies Comparison (LWBC){% endblock %}</title>
         <!-- Latest compiled and minified JavaScript and JQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="{% static 'js/jquery.Jcrop.min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/jquery.Jcrop.min.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/LWBC.css' %}" type="text/css" />
 </head>
 <body>
 <div class="container" style="width: 100%!important;">
@@ -20,7 +21,7 @@
           <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-              <a class="navbar-brand" href="/">Fusion MultiPan</a>
+              <a class="navbar-brand" href="/">Lentic Water Bodies Comparison (LWBC)</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
@@ -83,7 +84,7 @@ $pimg = $('#preview-pane .preview-container img'),
 xsize = $pcnt.width(),
 ysize = $pcnt.height();*/
 
-$('#id_file_mul').on('change', function (e) {
+$('#id_file').on('change', function (e) {
     /*$("#id_tam_pixel_mul").val(json[this.value].cell_size);
     $("#id_lat_mul").val(json[this.value].x);
     $("#id_lon_mul").val(json[this.value].y);*/
@@ -161,7 +162,11 @@ function verificarCampos(){
     }else{return true}
 }
 function move_jcrops(c){
-    /*
+    $('#id_x_mul').val(c.x)
+    $('#id_y_mul').val(c.y)
+    $('#id_x2_mul').val(c.x2)
+    $('#id_y2_mul').val(c.y2)
+/*
     if (parseInt(c.w) > 0)
       {
         proporcion = $('#id_tam_pixel_mul').val() / $('#id_tam_pixel_pan').val();

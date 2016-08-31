@@ -4,16 +4,31 @@
 {% if user.is_authenticated %}
 {% load staticfiles %}
     <h1 style="text-align: center;">
-       Fusión de Imagenes:
+       Comparativo multitemporal de curpos lénticos:
     </h1>
     <br>
-    <form action="/make-fusion/" method="post">
+    <form action="/processing/" method="post">
     {% csrf_token %}
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
+            <!-- List group -->
+            <label for="ud-images">Seleccione las imágenes a comparar:</label>
+            <ul class="list-group" id="ul-images">
+            {% for f in image_files %}
+                <li class="list-group-item">
+                    {{f.fileUpload.name}}
+                    <div class="material-switch pull-right">
+                        <input id="{{f.fileUpload.name}}" name="checks[]" type="checkbox" value="{{f.fileUpload.name}}" />
+                        <label for="{{f.fileUpload.name}}" class="label-success"></label>
+                    </div>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="col-sm-6">
             <div class="form-group">
                 <label for="id_file">Multiespectral:</label>
-                <select class="form-control" id="id_file_mul" name="file_mul"  required>
+                <select class="form-control" id="id_file" name="file_mul"  required>
                     <option value="">seleccione un archivo</option>
                     {% for f in image_files %}
                         <option value='{{f.fileUpload.name}}'>{{f.fileUpload.name}}</option>
@@ -42,21 +57,16 @@
                     </div>
                     <div class="col-sm-1" id="id_diadica_mul_val" style="font-size: 16px;display:none;">1</div>
                 </div>
-                <img src="{% static 'default.png' %}" id="target_mul" style="width: 100%;" />
+                <img src="{% static 'default.png' %}" id="target_mul" style="width: 40%;" />
             </div>
         </div>
     </div>
-    Coordenadas mul:
+    <!--Coordenadas de corte (esquinas):-->
     <input type="text" id="id_x_mul" name="x_mul" value="0">
     <input type="text" id="id_y_mul" name="y_mul" value="0">
     <input type="text" id="id_x2_mul" name="x2_mul" value="0">
-    <input type="text" id="id_y2_mul" name="y2_mul" value="0">
+    <input type="text" id="id_y2_mul" name="y2_mul" value="0">-->
     <br/>
-    Coordenadas pan:
-    <input type="text" id="id_x_pan" name="x_pan" value="0">
-    <input type="text" id="id_y_pan" name="y_pan" value="0">
-    <input type="text" id="id_x2_pan" name="x2_pan" value="0">
-    <input type="text" id="id_y2_pan" name="y2_pan" value="0">
     <input type="submit" value="Enviar" />
 </form>
     <br><br>

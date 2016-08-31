@@ -274,15 +274,9 @@ def download_file(request, id_file):
 ########## RUN THE FUSION SCRIPT ################
 
 @login_required(login_url='/login/')
-def make_fusion(request):
+def processing(request):
     #Obtengo las variables dle formulario
-    file_mul = request.POST.get('file_mul', '')
-    file_pan = request.POST.get('file_pan', '')
-    lat_pan = request.POST.get('lat_pan', '')
-    lat_mul = request.POST.get('lat_mul', '')
-    lon_mul = request.POST.get('lon_mul', '')
-    lon_pan = request.POST.get('lon_pan', '')
-    nivel = request.POST.get('nivel', '')
+    file_mul = '/home/nazkter/Sofware_Develop/lentic/files/'+request.POST.get('file_mul', '')
     tam_pixel_mul = request.POST.get('tam_pixel_mul', '')
     tam_pixel_pan = request.POST.get('tam_pixel_pan', '')
     diadica_mul = request.POST.get('diadica_mul', '')
@@ -290,46 +284,57 @@ def make_fusion(request):
     y_mul = float(request.POST.get('y_mul', ''))
     x2_mul = float(request.POST.get('x2_mul', ''))
     y2_mul = float(request.POST.get('y2_mul', ''))
-    x_pan = float(request.POST.get('x_pan', ''))
-    y_pan = float(request.POST.get('y_pan', ''))
-    x2_pan = float(request.POST.get('x2_pan', ''))
-    y2_pan = float(request.POST.get('y2_pan', ''))
-    #corto ambas imagenes
-    file_pan = super_crop(file_pan,x_pan,y_pan,x2_pan,y2_pan)
-    file_mul = super_crop(file_mul,x_mul,y_mul,x2_mul,y2_mul)
-    # Cambio el tamaño de celda de cada imagen segun su tamaño de pixel y el MCD
-    mcd = m_c_d(int(tam_pixel_mul), int(tam_pixel_pan))
-    print 'el maximo comun divisor es %s'%mcd
-    pan_image = getNewCellSizeImage(file_pan,int(tam_pixel_pan),mcd)
-    mul_image = getNewCellSizeImage(file_mul,int(tam_pixel_mul),mcd)
-    print 'shape pan_image:%s'%(pan_image.shape,)
-    print 'shape mul_image:%s'%(mul_image.shape,)
-    # voy bien :D ahora guardo las iamgenes para ver si quedaro bn muahahahha
-    newCell_mul_url = '/home/nazkter/Sofware_Develop/fusion_multipan/files/new_cell'+file_mul[2:]
-    newCell_pan_url = '/home/nazkter/Sofware_Develop/fusion_multipan/files/new_cell'+file_pan[2:]
-    im_pan = Image.fromarray(pan_image)
-    im_mul = Image.fromarray(mul_image)
-    im_pan.save(newCell_pan_url)
-    im_mul.save(newCell_mul_url)
-    #plt.imsave(newCell_pan_url,pan_image, cmap=plt.cm.gray)
-    #plt.imsave(newCell_mul_url,mul_image)
-    ############################################################################
-    profile = User.objects.select_related().get(id=request.user.pk).profile    
+    #corto todas las imagenes que se seleccionaron
+    img_list = request.POST.getlist('checks[]')
+    lista_temp = []
+    for img in img_list:
+        img = super_crop(img,x_mul,y_mul,x2_mul,y2_mul)
+        lista_temp.append(img)
+    profile = User.objects.select_related().get(id=request.user.pk).profile
     f = Fusion(profile=profile)
     f.save()
-    f.run(file_pan=newCell_pan_url, file_mul=newCell_mul_url, nivel=nivel)
+    f.run(file_list=lista_temp)
+
     success = 'El proceso se ha enviado a ejecución, para ver su estado, consulte la lista de procesos por medio del boton "Procesos" del menú principal o haciendo clic en el siguiente botón:'
     url_continuar = '/process/show'
     msg_continuar = 'Ver lista de procesos'
     return render(request, 'success.html', {'success': success, 'url_continuar': url_continuar, 'msg_continuar': msg_continuar})
-
+    #file_pan = super_crop(file_pan,x_pan,y_pan,x2_pan,y2_pan)
+    #file_mul = super_crop(file_mul,x_mul,y_mul,x2_mul,y2_mul)
+    # Cambio el tamaño de celda de cada imagen segun su tamaño de pixel y el MCD
+    #mcd = m_c_d(int(tam_pixel_mul), int(tam_pixel_pan))
+    #print 'el maximo comun divisor es %s'%mcd
+    #pan_image = getNewCellSizeImage(file_pan,int(tam_pixel_pan),mcd)
+    #mul_image = getNewCellSizeImage(file_mul,int(tam_pixel_mul),mcd)
+    #print 'shape pan_image:%s'%(pan_image.shape,)
+    #print 'shape mul_image:%s'%(mul_image.shape,)
+    # voy bien :D ahora guardo las iamgenes para ver si quedaro bn muahahahha
+    #newCell_mul_url = '/home/nazkter/Sofware_Develop/fusion_multipan/files/new_cell'+file_mul[2:]
+    #newCell_pan_url = '/home/nazkter/Sofware_Develop/fusion_multipan/files/new_cell'+file_pan[2:]
+    #im_pan = Image.fromarray(pan_image)
+    #im_mul = Image.fromarray(mul_image)
+    #im_pan.save(newCell_pan_url)
+    #im_mul.save(newCell_mul_url)
+    #plt.imsave(newCell_pan_url,pan_image, cmap=plt.cm.gray)
+    #plt.imsave(newCell_mul_url,mul_image)
+    ############################################################################
+    '''profile = User.objects.select_related().get(id=request.user.pk).profile    
+    f = Fusion(profile=profile)
+    f.save()
+    f.run(file_mul=file_mul)
+    success = 'El proceso se ha enviado a ejecución, para ver su estado, consulte la lista de procesos por medio del boton "Procesos" del menú principal o haciendo clic en el siguiente botón:'
+    url_continuar = '/process/show'
+    msg_continuar = 'Ver lista de procesos'
+    return render(request, 'success.html', {'success': success, 'url_continuar': url_continuar, 'msg_continuar': msg_continuar})
+'''
 ########## OTHER SCRIPTS ################
 def m_c_d(a, b):
     return a if b == 0 else m_c_d(b, a%b)
 
 def super_crop(file,x1,y1,x2,y2):
-    url = '/home/nazkter/Sofware_Develop/fusion_multipan/files'+file[1:]
+    url = '/home/nazkter/Sofware_Develop/lentic/files'+file[1:]
     img = Image.open(url)
+    img.mode = 'I'
     aux = img.crop((x1, y1, x2, y2))
     crop_url = '/home/nazkter/Sofware_Develop/fusion_multipan/files/crop_'+file[2:]
     aux.save(crop_url)

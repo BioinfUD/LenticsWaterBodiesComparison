@@ -56,7 +56,9 @@ def get_areas(shp):
 			#print area
 			feature.SetField("Area", area)
 			layer.SetFeature(feature)
-			area_total = area_total+area 
+			area_total = area_total+area
+	with open(shp+".txt","a+") as f:
+		f.write(str(area_total)) 
 	print 'Area total:'
 	print area_total
 	dataSource = None
