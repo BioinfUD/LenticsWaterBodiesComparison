@@ -19,6 +19,14 @@ from django.template import loader, Context, RequestContext
 from django.contrib.auth import authenticate, login, logout
 import jsonpickle
 sys.path
+try:
+    from html import unescape  # python 3.4+
+except ImportError:
+    try:
+        from html.parser import HTMLParser  # python 3.x (<3.4)
+    except ImportError:
+        from HTMLParser import HTMLParser  # python 2.x
+    unescape = HTMLParser().unescape
 
 #   ############ AUTENTICATION ###############
 def auth_view(request):
@@ -256,7 +264,15 @@ def show_processes(request):
 @login_required(login_url='/login/')
 def show_specific_process(request, process_id):
     p = Proceso.objects.get(id=process_id)
-    return render(request, 'show_process_info.html', {'p': p})
+    x=[]
+    y=[]
+    print p.shapes
+    for file in ast.literal_eval(str(p.shapes)):
+        print 'leyendo archivo '+file+'.shp.txt'
+        with open('/home/nazkter/Sofware_Develop/lentic/files/output/'+file+'.shp.txt', 'r') as f:
+            area = f.readline()
+            y.append(float(area))
+    return render(request, 'show_process_info.html', {'p': p, 'shapes': ast.literal_eval(str(p.shapes)), 'y': y})
 
 
 @login_required(login_url='/login/')
@@ -336,17 +352,17 @@ def super_crop(file,x1,y1,x2,y2):
     img = Image.open(url)
     img.mode = 'I'
     aux = img.crop((x1, y1, x2, y2))
-    crop_url = '/home/nazkter/Sofware_Develop/fusion_multipan/files/crop_'+file[2:]
+    crop_url = '/home/nazkter/Sofware_Develop/lentic/files/crop_'+file[2:]
     aux.save(crop_url)
     return './crop_'+file[2:]
 
 def getNewCellSizeImage(image, cell_size, mcd):
     if cell_size == mcd:
-        img = '/home/nazkter/Sofware_Develop/fusion_multipan/files'+image[1:]
+        img = '/home/nazkter/Sofware_Develop/lentic/files'+image[1:]
         print 'la imagen %s no necesita cambiar el tamao de celda'%(img)
         return plt.imread(img)
 
-    image_origin = plt.imread('/home/nazkter/Sofware_Develop/fusion_multipan/files'+image[1:])
+    image_origin = plt.imread('/home/nazkter/Sofware_Develop/lentic/files'+image[1:])
     shape = image_origin.shape
     print shape
     expand = cell_size/mcd # cantidad de celdas nuevas por cada actual

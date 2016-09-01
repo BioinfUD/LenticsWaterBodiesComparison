@@ -14,6 +14,7 @@ from django.conf import settings
 from random import randint
 import os
 import csv
+import ast
 #from image_cropping import ImageCropWidget
 #from image_cropping import ImageCropField, ImageRatioField
 
@@ -92,6 +93,8 @@ class Proceso(models.Model):
     inicio = models.DateTimeField(auto_now_add=True)
     fin = models.DateTimeField(null=True)
     resultado = models.ForeignKey(File, null=True, blank=True)
+    shapes = models.TextField(default="None")
+    images = models.TextField(default="None")
 
     class Meta:
         verbose_name_plural = 'Procesos'
@@ -146,7 +149,7 @@ class Fusion(models.Model):
     name = models.TextField(default="Lentic area calculation")
     procesos = models.ManyToManyField(Proceso)
     profile = models.ForeignKey(Profile)
-    out_file = models.ForeignKey(File, null=True)
+    out_files = models.TextField(default="None")
     nivel = models.IntegerField(default=1)
 
     def run_this(self, file_list=""):
@@ -154,40 +157,42 @@ class Fusion(models.Model):
         self.save()
         # lista de archivos temporales
         temp_list = []
+        img_list = []
         # Se ejecuta el Scrip creado para fusionar las imagenes
         comando = ""
         for img in file_list:
             tmp_dir = "lentic_%s.tif" % randint(1, 1000000)
             temp_list.append(tmp_dir)
-            comando = comando +"python /home/nazkter/Sofware_Develop/lentic/bin/lentico.py /home/nazkter/Sofware_Develop/lentic/files/%s /tmp/%s && " % (img, tmp_dir)
+            img_list.append(img)
+            comando = comando +"python /home/nazkter/Sofware_Develop/lentic/bin/lentico.py /home/nazkter/Sofware_Develop/lentic/files/%s /home/nazkter/Sofware_Develop/lentic/files/output/%s && " % (img, tmp_dir)
         comando = comando[0:-3]
         print "comando: %s" % (comando)
+        print temp_list
         # Se crea el proseso y se envia a la cola
-        '''p1 = Proceso(comando=str(comando),profile=self.profile)
-                                p1.save()
-                                self.procesos.add(p1)
-                                # To get files with path: tales.fileUpload.path
-                                # Se genera indice y espero hasta que este listo
-                                t1 = threading.Thread(target=p1.run_process)
-                                t1.setDaemon(True)
-                                t1.start()
-                                while t1.isAlive():
-                                    sleep(1)
-                                file_name = "/tmp/%s.shp" % tmp_dir
-                        
-                                
-                                #with open(file_name, 'r+') as f:
-                                #    text = f.read()
-                                #    f.seek(0)
-                                #    f.truncate()
-                                #    f.write(text.replace(' ', '\t'))
-                                
-                                out_file = File(fileUpload=Django_File(open(
-                                    file_name)), description="Salida " + self.name, profile=self.profile, ext="results")
-                                out_file.save()
-                                self.out_file = out_file
-                                p1.resultado = out_file
-                                p1.save()'''
+        p1 = Proceso(comando=str(comando),profile=self.profile)
+        p1.save()
+        self.procesos.add(p1)
+        # To get files with path: tales.fileUpload.path
+        # Se genera indice y espero hasta que este listo
+        t1 = threading.Thread(target=p1.run_process)
+        t1.setDaemon(True)
+        t1.start()
+        while t1.isAlive():
+            sleep(1)
+        #file_name = "/tmp/%s.shp" % tmp_dir
+        #with open(file_name, 'r+') as f:
+        #    text = f.read()
+        #    f.seek(0)
+        #    f.truncate()
+        #    f.write(text.replace(' ', '\t'))
+        
+        #out_files = File(fileUpload=Django_File(open(
+        #    file_name)), description="Salida " + self.name, profile=self.profile, ext="results")
+        #out_file.save()'''
+        self.out_files = str(temp_list)
+        p1.shapes = str(temp_list)
+        p1.images = str(img_list)
+        p1.save()
 
     def run(self, file_list=""):
         t = threading.Thread(target=self.run_this, kwargs=dict(

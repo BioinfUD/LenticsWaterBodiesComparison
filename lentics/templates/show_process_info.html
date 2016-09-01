@@ -23,7 +23,7 @@
 			</div>
 			<div class="row">
 			    <div class="col-sm-10">
-			    Pendiente
+			    <div id="plotly"></div>
 			    	<!--<img src="/static/{{p.resultado.fileUpload.name}}.png/" style="max-width: 100%;">-->
 			    </div>
 			</div>
@@ -43,4 +43,26 @@
     		{% endif %}</pre>
 		</div>
 	</div>
+	<script type="text/javascript">
+		trace2 = {
+			type: 'scatter',
+			x: [{% for x in shapes %} '{{x}}', {% endfor %}],
+			y: {{y}},
+			mode: 'lines',
+			name: 'Blue',
+			line: {
+				color: 'rgb(55, 128, 191)',
+				width: 1
+			}
+		};
+
+		var layout = {
+			width: 500,
+			height: 500
+		};
+
+		var data = [trace2];
+
+		Plotly.newPlot('plotly', data, layout);
+	</script>
 {% endblock %}
