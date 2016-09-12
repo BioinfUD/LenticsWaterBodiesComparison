@@ -223,7 +223,7 @@ def show_video(request):
 
 
 def show_tutorial(request):
-    image_data = open('%s/Manuales/ManualUsuarioFusionMultiPan.pdf' % settings.BASE_DIR, 'rb').read()
+    image_data = open('%s/Manuales/ManualUsuarioLWBC.pdf' % settings.BASE_DIR, 'rb').read()
     return HttpResponse(image_data, content_type='application/pdf')
 
 

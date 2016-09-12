@@ -3,7 +3,6 @@
 <html lang="en">
 <head>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" type="text/css" href="http://bioinfud.com/DifExp/bootstrap2.min.css"/>
     <!-- Optional theme -->  
     <title>{% block title %}Lentic Water Bodies Comparison (LWBC){% endblock %}</title>
         <!-- Latest compiled and minified JavaScript and JQuery-->
@@ -12,6 +11,7 @@
     <script src="{% static 'js/jquery.Jcrop.min.js' %}"></script>
     <script src="{% static 'js/plotly.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/jquery.Jcrop.min.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/LWBC.css' %}" type="text/css" />
 </head>
 <body>
@@ -52,11 +52,11 @@
                 <li ><a href="/files/">Imagenes</a></li>
                 <li ><a href="/process/show/">Procesos</a></li>
             </ul>
-            <!--<div class="alert alert-success" style="bottom: 30px;position: fixed;">
+            <div class="alert alert-success" style="bottom: 30px;position: fixed;">
                 <strong>Ayuda: </strong><br><br>
                 &#8226; <a href="/help/video/">Video </a><br>
                 &#8226; <a href="/help/tutorial/" target="_blank">Tutorial </a>
-            </div>-->
+            </div>
             <!-- <div id="preview-pane" style="position: fixed;z-index: 2000;bottom: 5px;left: 5px;">
                 <div class="preview-container">
                     <img src="{% static 'default.png' %}" class="jcrop-preview" id="preview_mul" alt="Preview" />

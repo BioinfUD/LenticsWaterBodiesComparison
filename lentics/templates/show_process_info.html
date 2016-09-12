@@ -14,18 +14,29 @@
 		<div id="resultado" class="tab-pane fade in active">
 			<div class="row">
 			    <div class="col-sm-10"><h3>comparativo</h3></div>
-			    <div class="col-sm-2">
-			    	<br>
-			    	<a href="/files/{{p.resultado.id}}/">
-			    		<span class="label label-success">Descargar archivo</span>
-			    	</a>
-			    </div>
 			</div>
 			<div class="row">
-			    <div class="col-sm-10">
+			    <div class="col-sm-7">
 			    <div id="plotly"></div>
 			    	<!--<img src="/static/{{p.resultado.fileUpload.name}}.png/" style="max-width: 100%;">-->
 			    </div>
+			    <div class="col-sm-5">
+			    	{% for img in shapes %}
+				    	<span class="" title="Description: {{f.description}}">
+	                        {{img}}
+	                    </span>
+	                    <span class="pull-right">
+	                        <span class="label label-success glyphicon glyphicon-edit" style="display: table-cell;">
+	                            <a style="color:white" href="/static/output/{{img}}.shp">
+	                            Descargar
+	                            </a>
+	                        </span>
+	                    </span>
+	                    <br/>
+			    	{% endfor %}
+			    </div>
+
+			    			    	
 			</div>
 		</div>
 		<div id="errores" class="tab-pane fade">

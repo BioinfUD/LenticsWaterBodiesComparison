@@ -27,7 +27,7 @@
         </div>
         <div class="col-sm-6">
             <div class="form-group">
-                <label for="id_file">Multiespectral:</label>
+                <label for="id_file">Muestra de recorte:</label>
                 <select class="form-control" id="id_file" name="file_mul"  required>
                     <option value="">seleccione un archivo</option>
                     {% for f in image_files %}
@@ -57,26 +57,26 @@
                     </div>
                     <div class="col-sm-1" id="id_diadica_mul_val" style="font-size: 16px;display:none;">1</div>
                 </div>
-                <img src="{% static 'default.png' %}" id="target_mul" style="width: 40%;" />
+                <img src="{% static 'default.png' %}" id="target_mul" style="width: 100%;" />
             </div>
         </div>
     </div>
     <!--Coordenadas de corte (esquinas):-->
-    <input type="text" id="id_x_mul" name="x_mul" value="0">
-    <input type="text" id="id_y_mul" name="y_mul" value="0">
-    <input type="text" id="id_x2_mul" name="x2_mul" value="0">
-    <input type="text" id="id_y2_mul" name="y2_mul" value="0">-->
+    <input type="hidden" id="id_x_mul" name="x_mul" value="0">
+    <input type="hidden" id="id_y_mul" name="y_mul" value="0">
+    <input type="hidden" id="id_x2_mul" name="x2_mul" value="0">
+    <input type="hidden" id="id_y2_mul" name="y2_mul" value="0">
     <br/>
     <input type="submit" value="Enviar" />
 </form>
     <br><br>
 <!-- HOME si el usuario NO está logueado -->
 {% else %}
-<!--
+
 <div class="row" style="text-align:center">
     <div class="col-sm-12">
         <h1>
-            Fusion Multi-Pan (FMP)
+            Lentics Water Bodies Comparison (LWBC)
         </h1>
         <br>
     </div>
@@ -84,7 +84,7 @@
 <div class="row">
     <div class="col-sm-3"></div>
     <div class="col-sm-6">
-        <iframe width="100%" height="315" src="https://www.youtube.com/embed/Ub1BPjfoKgU?rel=0" frameborder="0" allowfullscreen></iframe>
+        <iframe width="100%" height="315" src="https://www.youtube.com/embed/Lj-Hwipqb_g?rel=0" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="col-sm-3"></div>
 </div>
@@ -92,16 +92,11 @@
 <div class="row">
     <div class="col-sm-2"></div>
     <div class="col-sm-8" style="text-align: justify;">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Esta implementación permite la creación de un comparativo multitemporal sobre el área de entidades lénticas que se encuentran en imágenes de satélite tipo radar a las cuales se les realiza un recorte para seleccionar una zona de estudio específica, como resultado de proceso se obtiene un histograma de la variación en el tiempo del área del recurso hídrico y la creación de entidades geográficas en formato de vector (.shp) de cada imagen.
     </div>
     <div class="col-sm-2"></div>
 </div>
--->
+
 {% endif %}
 
 <script type="text/javascript">
