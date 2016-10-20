@@ -6,4 +6,4 @@ Este software permite la creación de un comparativo multitemporal sobre el áre
 El servidor para pruebas se encuentra alojado en la siguiente dirección: <a href="http://bioinfud.com/lwbc/">http://bioinfud.com/lwbc/</a>
 
 <h1>Video-tutorial:</h1>
-<a href="https://youtu.be/Lj-Hwipqb_g">https://youtu.be/Lj-Hwipqb_g</a>
+<a href="https://youtu.be/FbAPcAGIoCA">https://youtu.be/FbAPcAGIoCA</a>
